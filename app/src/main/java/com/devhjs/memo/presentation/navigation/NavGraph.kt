@@ -1,15 +1,11 @@
 package com.devhjs.memo.presentation.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devhjs.memo.presentation.home.HomeScreen
+import com.devhjs.memo.presentation.info.InformationScreenRoot
 import com.devhjs.memo.presentation.shopping.ShoppingScreen
 
 sealed class Screen(val route: String) {
@@ -39,17 +35,9 @@ fun NavGraph() {
             )
         }
         composable(Screen.UserInfo.route) {
-            PlaceholderScreen(title = "회원가입 정보 화면")
+            InformationScreenRoot(
+                onBackClick = { navController.popBackStack() }
+            )
         }
-    }
-}
-
-@Composable
-fun PlaceholderScreen(title: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = title)
     }
 }

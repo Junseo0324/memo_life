@@ -5,17 +5,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhjs.memo.domain.model.ShoppingItem
-import com.devhjs.memo.domain.usecase.*
+import com.devhjs.memo.domain.usecase.AddShoppingItemUseCase
+import com.devhjs.memo.domain.usecase.DeleteAllShoppingItemsUseCase
+import com.devhjs.memo.domain.usecase.DeleteShoppingItemUseCase
+import com.devhjs.memo.domain.usecase.GetShoppingListUseCase
+import com.devhjs.memo.domain.usecase.UpdateShoppingItemUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingViewModel @Inject constructor(
-    private val getShoppingListUseCase: GetShoppingListUseCase,
+    getShoppingListUseCase: GetShoppingListUseCase,
     private val addShoppingItemUseCase: AddShoppingItemUseCase,
     private val deleteShoppingItemUseCase: DeleteShoppingItemUseCase,
     private val updateShoppingItemUseCase: UpdateShoppingItemUseCase,
