@@ -66,17 +66,12 @@ class InformationViewModel @Inject constructor(
                         selectedItemForEdit = null
                     ) 
                 }
-                clearForm()
             }
             is InformationAction.ShowEditDialog -> {
                 _state.update { 
                     it.copy(
                         isDialogVisible = true,
-                        selectedItemForEdit = action.item,
-                        siteName = action.item.siteName,
-                        userId = action.item.userId,
-                        userPw = action.item.userPw,
-                        memo = action.item.memo
+                        selectedItemForEdit = action.item
                     )
                 }
             }
@@ -87,46 +82,18 @@ class InformationViewModel @Inject constructor(
                         selectedItemForEdit = null
                     ) 
                 }
-                clearForm()
             }
-            is InformationAction.UpdateSiteName -> {
-                _state.update { it.copy(siteName = action.siteName) }
-            }
-            is InformationAction.UpdateUserId -> {
-                _state.update { it.copy(userId = action.userId) }
-            }
-            is InformationAction.UpdateUserPw -> {
-                _state.update { it.copy(userPw = action.userPw) }
-            }
-            is InformationAction.UpdateMemo -> {
-                _state.update { it.copy(memo = action.memo) }
-            }
-            is InformationAction.ClearForm -> {
-                clearForm()
-            }
-            is InformationAction.AddInformation -> {
+            is InformationAction.SaveInformation -> {
                 viewModelScope.launch {
                     val currentState = _state.value
                     
                     if (currentState.selectedItemForEdit != null) {
                         // 수정 모드
-                        val updatedItem = currentState.selectedItemForEdit.copy(
-                            siteName = currentState.siteName,
-                            userId = currentState.userId,
-                            userPw = currentState.userPw,
-                            memo = currentState.memo
-                        )
-                        updateInformationItemUseCase(updatedItem)
+                        updateInformationItemUseCase(action.item)
                         _event.emit(InformationEvent.ShowSnackbar("정보가 수정되었습니다."))
                     } else {
                         // 추가 모드
-                        val newItem = InformationItem(
-                            siteName = currentState.siteName,
-                            userId = currentState.userId,
-                            userPw = currentState.userPw,
-                            memo = currentState.memo
-                        )
-                        addInformationItemUseCase(newItem)
+                        addInformationItemUseCase(action.item)
                         _event.emit(InformationEvent.ShowSnackbar("새로운 정보가 추가되었습니다."))
                     }
                     
@@ -136,7 +103,6 @@ class InformationViewModel @Inject constructor(
                             selectedItemForEdit = null
                         ) 
                     }
-                    clearForm()
                 }
             }
             is InformationAction.DeleteInformation -> {
@@ -150,17 +116,6 @@ class InformationViewModel @Inject constructor(
                     _event.emit(InformationEvent.NavigateBack)
                 }
             }
-        }
-    }
-
-    private fun clearForm() {
-        _state.update { 
-            it.copy(
-                siteName = "",
-                userId = "",
-                userPw = "",
-                memo = ""
-            ) 
         }
     }
 }

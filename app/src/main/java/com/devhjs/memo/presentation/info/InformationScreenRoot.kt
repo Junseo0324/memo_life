@@ -45,16 +45,9 @@ fun InformationScreenRoot(
         
         if (state.isDialogVisible) {
             AddInfoDialog(
-                siteName = state.siteName,
-                userId = state.userId,
-                userPw = state.userPw,
-                memo = state.memo,
-                onSiteNameChange = { viewModel.onAction(InformationAction.UpdateSiteName(it)) },
-                onUserIdChange = { viewModel.onAction(InformationAction.UpdateUserId(it)) },
-                onUserPwChange = { viewModel.onAction(InformationAction.UpdateUserPw(it)) },
-                onMemoChange = { viewModel.onAction(InformationAction.UpdateMemo(it)) },
+                initialItem = state.selectedItemForEdit,
                 onDismiss = { viewModel.onAction(InformationAction.HideDialog) },
-                onSave = { viewModel.onAction(InformationAction.AddInformation) }
+                onSave = { item -> viewModel.onAction(InformationAction.SaveInformation(item)) }
             )
         }
     }

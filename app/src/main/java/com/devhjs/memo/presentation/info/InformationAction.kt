@@ -7,12 +7,7 @@ sealed interface InformationAction {
     data object ShowDialog : InformationAction
     data class ShowEditDialog(val item: InformationItem) : InformationAction
     data object HideDialog : InformationAction
-    data class UpdateSiteName(val siteName: String) : InformationAction
-    data class UpdateUserId(val userId: String) : InformationAction
-    data class UpdateUserPw(val userPw: String) : InformationAction
-    data class UpdateMemo(val memo: String) : InformationAction
-    data object AddInformation : InformationAction
+    data class SaveInformation(val item: InformationItem) : InformationAction
     data class DeleteInformation(val item: InformationItem) : InformationAction
-    data object ClearForm : InformationAction
     data object OnBackClick : InformationAction
 }

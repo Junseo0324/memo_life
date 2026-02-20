@@ -16,27 +16,30 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.devhjs.memo.domain.model.InformationItem
 import com.devhjs.memo.presentation.designsystem.AppTextStyles
 
 @Composable
 fun AddInfoDialog(
-    siteName: String,
-    userId: String,
-    userPw: String,
-    memo: String,
-    onSiteNameChange: (String) -> Unit,
-    onUserIdChange: (String) -> Unit,
-    onUserPwChange: (String) -> Unit,
-    onMemoChange: (String) -> Unit,
+    initialItem: InformationItem? = null,
     onDismiss: () -> Unit,
-    onSave: () -> Unit
+    onSave: (InformationItem) -> Unit
 ) {
+    var siteName by remember { mutableStateOf(initialItem?.siteName ?: "") }
+    var userId by remember { mutableStateOf(initialItem?.userId ?: "") }
+    var userPw by remember { mutableStateOf(initialItem?.userPw ?: "") }
+    var memo by remember { mutableStateOf(initialItem?.memo ?: "") }
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -69,7 +72,7 @@ fun AddInfoDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = siteName,
-                    onValueChange = onSiteNameChange,
+                    onValueChange = { siteName = it },
                     placeholder = { 
                         Text("예: 네이버", color = Color(0x800A0A0A), fontSize = 18.sp) 
                     },
@@ -95,7 +98,7 @@ fun AddInfoDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = userId,
-                    onValueChange = onUserIdChange,
+                    onValueChange = { userId = it },
                     placeholder = { 
                         Text("아이디 또는 이메일", color = Color(0x800A0A0A), fontSize = 18.sp) 
                     },
@@ -121,7 +124,7 @@ fun AddInfoDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = userPw,
-                    onValueChange = onUserPwChange,
+                    onValueChange = { userPw = it },
                     placeholder = { 
                         Text("비밀번호", color = Color(0x800A0A0A), fontSize = 18.sp) 
                     },
@@ -147,7 +150,7 @@ fun AddInfoDialog(
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = memo,
-                    onValueChange = onMemoChange,
+                    onValueChange = { memo = it },
                     placeholder = { 
                         Text("기타 메모사항", color = Color(0x800A0A0A), fontSize = 18.sp) 
                     },
@@ -180,7 +183,16 @@ fun AddInfoDialog(
                     val isEnabled = siteName.isNotBlank() && userId.isNotBlank() && userPw.isNotBlank()
 
                     Button(
-                        onClick = onSave,
+                        onClick = {
+                            val item = InformationItem(
+                                id = initialItem?.id ?: 0,
+                                siteName = siteName,
+                                userId = userId,
+                                userPw = userPw,
+                                memo = memo
+                            )
+                            onSave(item)
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = if (isEnabled) Color(0xFF00A63E) else Color(0xFFD1D5DC)),
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
