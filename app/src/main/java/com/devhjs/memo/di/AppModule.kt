@@ -2,11 +2,13 @@ package com.devhjs.memo.di
 
 import android.app.Application
 import androidx.room.Room
-import com.devhjs.memo.data.local.ShoppingDao
-import com.devhjs.memo.data.local.ShoppingDatabase
+import com.devhjs.memo.data.local.MemoDatabase
+import com.devhjs.memo.data.local.dao.InformationDao
+import com.devhjs.memo.data.local.dao.ShoppingDao
+import com.devhjs.memo.data.repository.InformationRepositoryImpl
 import com.devhjs.memo.data.repository.ShoppingRepositoryImpl
+import com.devhjs.memo.domain.repository.InformationRepository
 import com.devhjs.memo.domain.repository.ShoppingRepository
-import com.devhjs.memo.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,17 +21,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideShoppingDatabase(app: Application): ShoppingDatabase {
+    fun provideMemoDatabase(app: Application): MemoDatabase {
         return Room.databaseBuilder(
             app,
-            ShoppingDatabase::class.java,
-            ShoppingDatabase.DATABASE_NAME
+            MemoDatabase::class.java,
+            MemoDatabase.DATABASE_NAME
         ).build()
     }
 
     @Provides
     @Singleton
-    fun provideShoppingDao(db: ShoppingDatabase): ShoppingDao {
+    fun provideShoppingDao(db: MemoDatabase): ShoppingDao {
         return db.shoppingDao
     }
 
@@ -39,5 +41,16 @@ object AppModule {
         return ShoppingRepositoryImpl(dao)
     }
 
+    @Provides
+    @Singleton
+    fun provideInformationDao(db: MemoDatabase): InformationDao {
+        return db.informationDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideInformationRepository(dao: InformationDao): InformationRepository {
+        return InformationRepositoryImpl(dao)
+    }
 
 }

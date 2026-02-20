@@ -1,6 +1,6 @@
 package com.devhjs.memo.data.repository
 
-import com.devhjs.memo.data.local.ShoppingDao
+import com.devhjs.memo.data.local.dao.ShoppingDao
 import com.devhjs.memo.data.mapper.toDomain
 import com.devhjs.memo.data.mapper.toEntity
 import com.devhjs.memo.domain.model.ShoppingItem

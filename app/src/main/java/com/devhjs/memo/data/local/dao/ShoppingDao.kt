@@ -1,6 +1,11 @@
-package com.devhjs.memo.data.local
+package com.devhjs.memo.data.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.devhjs.memo.data.local.entity.ShoppingEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -10,7 +15,7 @@ interface ShoppingDao {
     @Query("SELECT * FROM shopping_items ORDER BY id DESC")
     fun getShoppingList(): Flow<List<ShoppingEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertShoppingItem(item: ShoppingEntity)
 
     @Delete

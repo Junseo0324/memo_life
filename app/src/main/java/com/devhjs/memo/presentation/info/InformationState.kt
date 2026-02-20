@@ -1,5 +1,7 @@
 package com.devhjs.memo.presentation.info
 
+import com.devhjs.memo.domain.model.InformationItem
+
 data class InformationState(
     val searchQuery: String = "",
     val isDialogVisible: Boolean = false,
@@ -7,8 +9,7 @@ data class InformationState(
     val userId: String = "",
     val userPw: String = "",
     val memo: String = "",
-    val infoList: List<InformationItem> = listOf(
-        InformationItem("1", "네이버", "junso0324", "password123"),
-        InformationItem("2", "카카오", "kakao_user", "kakaoPw!@#")
-    )
+    val selectedItemForEdit: InformationItem? = null,
+    val infoList: List<InformationItem> = emptyList(),
+    val filteredInfoList: List<InformationItem> = emptyList()
 )
