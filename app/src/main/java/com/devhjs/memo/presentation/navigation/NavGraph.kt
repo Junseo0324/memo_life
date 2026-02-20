@@ -8,11 +8,7 @@ import com.devhjs.memo.presentation.home.HomeScreen
 import com.devhjs.memo.presentation.info.InformationScreenRoot
 import com.devhjs.memo.presentation.shopping.ShoppingScreenRoot
 
-sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object ShoppingList : Screen("shopping_list")
-    object UserInfo : Screen("user_info")
-}
+
 
 @Composable
 fun NavGraph() {
@@ -34,7 +30,7 @@ fun NavGraph() {
                 onBackClick = { navController.popBackStack() }
             )
         }
-        composable(Screen.UserInfo.route) {
+        composable(Screen.Info.route) {
             InformationScreenRoot(
                 onBackClick = { navController.popBackStack() }
             )
