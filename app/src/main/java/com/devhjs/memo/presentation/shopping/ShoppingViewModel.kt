@@ -1,7 +1,5 @@
 package com.devhjs.memo.presentation.shopping
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhjs.memo.domain.model.ShoppingItem
@@ -11,8 +9,15 @@ import com.devhjs.memo.domain.usecase.DeleteShoppingItemUseCase
 import com.devhjs.memo.domain.usecase.GetShoppingListUseCase
 import com.devhjs.memo.domain.usecase.UpdateShoppingItemUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,80 +30,73 @@ class ShoppingViewModel @Inject constructor(
     private val deleteAllShoppingItemsUseCase: DeleteAllShoppingItemsUseCase
 ) : ViewModel() {
 
-    // 장보기 리스트 상태 (Flow를 State로 변환)
-    val shoppingList = getShoppingListUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    private val _state = MutableStateFlow(ShoppingState())
+    val state: StateFlow<ShoppingState> = _state.asStateFlow()
 
-    // 다이얼로그 표시 여부 상태
-    private val _isDialogVisible = mutableStateOf(false)
-    val isDialogVisible: State<Boolean> = _isDialogVisible
+    private val _event = MutableSharedFlow<ShoppingEvent>()
+    val event: SharedFlow<ShoppingEvent> = _event.asSharedFlow()
 
-    // 다이얼로그 입력 필드 상태
-    private val _itemName = mutableStateOf("")
-    val itemName: State<String> = _itemName
-
-    private val _itemQuantity = mutableStateOf("")
-    val itemQuantity: State<String> = _itemQuantity
-
-    // 다이얼로그 열기/닫기
-    fun showDialog() {
-        _isDialogVisible.value = true
-    }
-
-    fun hideDialog() {
-        _isDialogVisible.value = false
-        // 입력 필드 초기화
-        _itemName.value = ""
-        _itemQuantity.value = ""
-    }
-
-    // 입력 필드 업데이트
-    fun onNameChange(newName: String) {
-        _itemName.value = newName
-    }
-
-    fun onQuantityChange(newQuantity: String) {
-        _itemQuantity.value = newQuantity
-    }
-
-    // 아이템 추가
-    fun addItem() {
-        if (_itemName.value.isNotBlank()) {
-            viewModelScope.launch {
-                addShoppingItemUseCase(
-                    ShoppingItem(
-                        name = _itemName.value,
-                        quantity = _itemQuantity.value,
-                        isChecked = false
-                    )
-                )
-                hideDialog()
+    init {
+        getShoppingListUseCase()
+            .onEach { list ->
+                _state.update { 
+                    it.copy(shoppingList = list) 
+                }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
-    // 아이템 삭제
-    fun deleteItem(item: ShoppingItem) {
-        viewModelScope.launch {
-            deleteShoppingItemUseCase(item)
-        }
-    }
-
-    // 전체 삭제
-    fun deleteAllItems() {
-        viewModelScope.launch {
-            deleteAllShoppingItemsUseCase()
-        }
-    }
-
-    // 체크 상태 토글
-    fun toggleItemChecked(item: ShoppingItem) {
-        viewModelScope.launch {
-            updateShoppingItemUseCase(item.copy(isChecked = !item.isChecked))
+    fun onAction(action: ShoppingAction) {
+        when (action) {
+            is ShoppingAction.ShowDialog -> {
+                _state.update { 
+                    it.copy(isDialogVisible = true) 
+                }
+            }
+            is ShoppingAction.HideDialog -> {
+                _state.update { 
+                    it.copy(isDialogVisible = false) 
+                }
+            }
+            is ShoppingAction.SaveShoppingItem -> {
+                if (action.name.isNotBlank()) {
+                    viewModelScope.launch {
+                        addShoppingItemUseCase(
+                            ShoppingItem(
+                                name = action.name,
+                                quantity = action.quantity,
+                                isChecked = false
+                            )
+                        )
+                        _event.emit(ShoppingEvent.ShowSnackbar("새로운 항목이 추가되었습니다."))
+                        _state.update { 
+                            it.copy(isDialogVisible = false) 
+                        }
+                    }
+                }
+            }
+            is ShoppingAction.DeleteShoppingItem -> {
+                viewModelScope.launch {
+                    deleteShoppingItemUseCase(action.item)
+                    _event.emit(ShoppingEvent.ShowSnackbar("항목이 삭제되었습니다."))
+                }
+            }
+            is ShoppingAction.DeleteAllShoppingItems -> {
+                viewModelScope.launch {
+                    deleteAllShoppingItemsUseCase()
+                    _event.emit(ShoppingEvent.ShowSnackbar("모든 항목이 삭제되었습니다."))
+                }
+            }
+            is ShoppingAction.ToggleItemChecked -> {
+                viewModelScope.launch {
+                    updateShoppingItemUseCase(action.item.copy(isChecked = !action.item.isChecked))
+                }
+            }
+            is ShoppingAction.OnBackClick -> {
+                viewModelScope.launch {
+                    _event.emit(ShoppingEvent.NavigateBack)
+                }
+            }
         }
     }
 }

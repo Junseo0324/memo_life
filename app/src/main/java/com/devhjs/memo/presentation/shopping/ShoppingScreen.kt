@@ -26,25 +26,21 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.devhjs.memo.presentation.component.AddItemDialog
 import com.devhjs.memo.presentation.component.ShoppingItemRow
 import com.devhjs.memo.presentation.designsystem.AppTextStyles
 
 @Composable
 fun ShoppingScreen(
-    onBackClick: () -> Unit,
-    viewModel: ShoppingViewModel = hiltViewModel()
+    state: ShoppingState,
+    onAction: (ShoppingAction) -> Unit
 ) {
-    val shoppingList = viewModel.shoppingList.collectAsState(initial = emptyList()).value
-    val isDialogVisible = viewModel.isDialogVisible.value
+    val shoppingList = state.shoppingList
 
     Box(
         modifier = Modifier
@@ -52,7 +48,6 @@ fun ShoppingScreen(
             .background(Color(0xFFF5F5F5))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,7 +56,7 @@ fun ShoppingScreen(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onBackClick() }
+                    modifier = Modifier.clickable { onAction(ShoppingAction.OnBackClick) }
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -95,7 +90,7 @@ fun ShoppingScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = { viewModel.showDialog() },
+                    onClick = { onAction(ShoppingAction.ShowDialog) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2979FF)),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -108,7 +103,7 @@ fun ShoppingScreen(
                 }
 
                 Button(
-                    onClick = { viewModel.deleteAllItems() },
+                    onClick = { onAction(ShoppingAction.DeleteAllShoppingItems) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD50000)), // Red Color
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -128,22 +123,11 @@ fun ShoppingScreen(
                 items(shoppingList) { item ->
                     ShoppingItemRow(
                         item = item,
-                        onToggleCheck = { viewModel.toggleItemChecked(item) },
-                        onDelete = { viewModel.deleteItem(item) }
+                        onToggleCheck = { onAction(ShoppingAction.ToggleItemChecked(item)) },
+                        onDelete = { onAction(ShoppingAction.DeleteShoppingItem(item)) }
                     )
                 }
             }
-        }
-
-        if (isDialogVisible) {
-            AddItemDialog(
-                itemName = viewModel.itemName.value,
-                itemQuantity = viewModel.itemQuantity.value,
-                onNameChange = { viewModel.onNameChange(it) },
-                onQuantityChange = { viewModel.onQuantityChange(it) },
-                onDismiss = { viewModel.hideDialog() },
-                onSave = { viewModel.addItem() }
-            )
         }
     }
 }

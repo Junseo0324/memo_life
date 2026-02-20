@@ -16,6 +16,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -26,13 +30,11 @@ import com.devhjs.memo.presentation.designsystem.AppTextStyles
 
 @Composable
 fun AddItemDialog(
-    itemName: String,
-    itemQuantity: String,
-    onNameChange: (String) -> Unit,
-    onQuantityChange: (String) -> Unit,
     onDismiss: () -> Unit,
-    onSave: () -> Unit
+    onSave: (String, String) -> Unit
 ) {
+    var itemName by remember { mutableStateOf("") }
+    var itemQuantity by remember { mutableStateOf("") }
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -61,7 +63,7 @@ fun AddItemDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = itemName,
-                    onValueChange = onNameChange,
+                    onValueChange = { itemName = it },
                     placeholder = { Text("예: 사과", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -84,7 +86,7 @@ fun AddItemDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = itemQuantity,
-                    onValueChange = onQuantityChange,
+                    onValueChange = { itemQuantity = it },
                     placeholder = { Text("예: 5개", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -112,7 +114,7 @@ fun AddItemDialog(
                     }
 
                     Button(
-                        onClick = onSave,
+                        onClick = { onSave(itemName, itemQuantity) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFCFD8DC)), // Light Gray
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier

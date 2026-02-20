@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devhjs.memo.presentation.home.HomeScreen
 import com.devhjs.memo.presentation.info.InformationScreenRoot
-import com.devhjs.memo.presentation.shopping.ShoppingScreen
+import com.devhjs.memo.presentation.shopping.ShoppingScreenRoot
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -30,7 +30,7 @@ fun NavGraph() {
             )
         }
         composable(Screen.ShoppingList.route) {
-            ShoppingScreen(
+            ShoppingScreenRoot(
                 onBackClick = { navController.popBackStack() }
             )
         }
