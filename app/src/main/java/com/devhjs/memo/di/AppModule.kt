@@ -9,6 +9,7 @@ import com.devhjs.memo.data.local.dao.ShoppingDao
 import com.devhjs.memo.data.repository.InformationRepositoryImpl
 import com.devhjs.memo.data.repository.RecipeRepositoryImpl
 import com.devhjs.memo.data.repository.ShoppingRepositoryImpl
+import com.devhjs.memo.data.util.ImageStorage
 import com.devhjs.memo.domain.repository.InformationRepository
 import com.devhjs.memo.domain.repository.RecipeRepository
 import com.devhjs.memo.domain.repository.ShoppingRepository
@@ -66,6 +67,12 @@ object AppModule {
     @Singleton
     fun provideRecipeRepository(dao: RecipeDao): RecipeRepository {
         return RecipeRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageStorage(app: Application):ImageStorage {
+        return ImageStorage(app)
     }
 
 }
