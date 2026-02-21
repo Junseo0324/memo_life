@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.devhjs.memo.presentation.home.HomeScreen
 import com.devhjs.memo.presentation.info.InformationScreenRoot
 import com.devhjs.memo.presentation.recipe.RecipeScreenRoot
+import com.devhjs.memo.presentation.recipe.RecipeWriteScreenRoot
 import com.devhjs.memo.presentation.shopping.ShoppingScreenRoot
 
 
@@ -38,6 +39,13 @@ fun NavGraph() {
 
         composable(Screen.Recipe.route) {
             RecipeScreenRoot(
+                onBackClick = { navController.popBackStack() },
+                onNewRecipeClick = { navController.navigate(Screen.RecipeWrite.route) }
+            )
+        }
+
+        composable(Screen.RecipeWrite.route) {
+            RecipeWriteScreenRoot(
                 onBackClick = { navController.popBackStack() }
             )
         }
