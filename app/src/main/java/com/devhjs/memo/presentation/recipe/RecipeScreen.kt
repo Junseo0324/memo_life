@@ -49,8 +49,7 @@ fun RecipeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFFF54900))
-                .shadow(elevation = 10.dp)
-                .padding(horizontal = 24.dp, vertical = 24.dp)
+                .padding(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +71,7 @@ fun RecipeScreen(
                     )
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "레시피 블로그",
                 style = AppTextStyles.Pretendard.Header1.copy(
@@ -94,7 +93,12 @@ fun RecipeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)
-                        .shadow(elevation = 15.dp, shape = RoundedCornerShape(14.dp)),
+                        .shadow(
+                            elevation = 10.dp,
+                            shape = RoundedCornerShape(14.dp),
+                            spotColor = Color(0x1A000000),
+                            ambientColor = Color(0x1A000000)
+                        ),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF54900)),
                     shape = RoundedCornerShape(14.dp),
                     contentPadding = PaddingValues(0.dp)
