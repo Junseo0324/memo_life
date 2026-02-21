@@ -4,10 +4,13 @@ import android.app.Application
 import androidx.room.Room
 import com.devhjs.memo.data.local.MemoDatabase
 import com.devhjs.memo.data.local.dao.InformationDao
+import com.devhjs.memo.data.local.dao.RecipeDao
 import com.devhjs.memo.data.local.dao.ShoppingDao
 import com.devhjs.memo.data.repository.InformationRepositoryImpl
+import com.devhjs.memo.data.repository.RecipeRepositoryImpl
 import com.devhjs.memo.data.repository.ShoppingRepositoryImpl
 import com.devhjs.memo.domain.repository.InformationRepository
+import com.devhjs.memo.domain.repository.RecipeRepository
 import com.devhjs.memo.domain.repository.ShoppingRepository
 import dagger.Module
 import dagger.Provides
@@ -51,6 +54,18 @@ object AppModule {
     @Singleton
     fun provideInformationRepository(dao: InformationDao): InformationRepository {
         return InformationRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeDao(db: MemoDatabase): RecipeDao {
+        return db.recipeDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeRepository(dao: RecipeDao): RecipeRepository {
+        return RecipeRepositoryImpl(dao)
     }
 
 }
