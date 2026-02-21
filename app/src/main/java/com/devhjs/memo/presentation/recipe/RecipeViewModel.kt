@@ -65,7 +65,7 @@ class RecipeViewModel @Inject constructor(
             }
             is RecipeAction.OnRecipeClick -> {
                 viewModelScope.launch {
-                    _event.emit(RecipeEvent.ShowSnackbar("레시피 상세 보기(${action.id}) 기능은 준비 중입니다."))
+                    _event.emit(RecipeEvent.NavigateToDetail(action.id))
                 }
             }
         }
