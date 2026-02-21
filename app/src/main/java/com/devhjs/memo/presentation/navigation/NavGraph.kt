@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.devhjs.memo.presentation.home.HomeScreen
 import com.devhjs.memo.presentation.info.InformationScreenRoot
 import com.devhjs.memo.presentation.recipe.RecipeScreenRoot
-import com.devhjs.memo.presentation.recipe.RecipeWriteScreenRoot
+import com.devhjs.memo.presentation.recipewrite.RecipeWriteScreenRoot
 import com.devhjs.memo.presentation.shopping.ShoppingScreenRoot
 
 
